@@ -4,17 +4,7 @@
 
 { config, pkgs, ... }:
 
-let
-  ibus-toggle-layout = pkgs.writeShellScriptBin "ibus-toggle-layout" ''
-    engine=$(ibus engine)
-
-if [ "$engine" == "xkb:us::eng" ]; then
-      ibus engine OpenBangla - OpenBangla Keyboard 
-    else
-      ibus engine xkb:us::eng - English
-    fi  '';
-
-in {  
+{ 
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
@@ -53,7 +43,7 @@ in {
 #    fcitx5-openbangla-keyboard 
 #    ];
 #   };
-
+#
   i18n.inputMethod = {
       enabled = "ibus";
       ibus.engines = with pkgs.ibus-engines; [ 
@@ -140,9 +130,12 @@ in {
   environment.systemPackages = with pkgs; [
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
+  # Import Scripts
+  (import /etc/nixos/scripts/ibus-toggle-layout.nix { inherit pkgs; })
+  bat
+  eza
   git
   htop
-  ibus-toggle-layout
   libreoffice-fresh
   libsForQt5.plasma-wayland-protocols
   libsForQt5.sddm
