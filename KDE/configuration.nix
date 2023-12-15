@@ -4,7 +4,17 @@
 
 { config, pkgs, ... }:
 
-{  
+let
+  ibus-toggle-layout = pkgs.writeShellScriptBin "ibus-toggle-layout" ''
+    engine=$(ibus engine)
+
+if [ "$engine" == "xkb:us::eng" ]; then
+      ibus engine OpenBangla - OpenBangla Keyboard 
+    else
+      ibus engine xkb:us::eng - English
+    fi  '';
+
+in {  
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
@@ -132,7 +142,7 @@
   #  wget
   git
   htop
-  ibus
+  ibus-toggle-layout
   libreoffice-fresh
   libsForQt5.plasma-wayland-protocols
   libsForQt5.sddm
