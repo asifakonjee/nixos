@@ -4,6 +4,23 @@
 
 { config, pkgs, ... }:
 
+let 
+  openbangla-keyboard-overlay = final: prev: {
+  	openbangla-keyboard = prev.fcitx5-openbangla-keyboard.overrideAttrs
+  	(old: {
+  	 version = "develop-2023-11-05";
+  	 src = final.fetchFromGitHub {
+  	 owner = "asifakonjee";
+  	 repo = "openbangla-keyboard";
+  	 rev = "73012424cfb4db310250836e63cd87ac84106c1b"; 
+  	 hash = "sha256-3moWzvuCD952sJGQct97k3Ls05S1ZavWhtH4LEdjUTI=";
+  	 fetchSubmodules = true;
+  	};
+  	});
+  };
+
+in
+
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -38,22 +55,22 @@
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
 
-  #  i18n.inputMethod = {
-#    enabled = "fcitx5";
-#    fcitx5.addons = with pkgs; [ 
-#    fcitx5-m17n
-#    fcitx5-openbangla-keyboard 
-#    ];
-#   };
-#
+  nixpkgs.overlay = [ openbangla-keyboard-overlay ];
   i18n.inputMethod = {
-      enabled = "ibus";
-      ibus.engines = with pkgs.ibus-engines; [ 
-      m17n
-      openbangla-keyboard 
-      ];
-     };
+    enabled = "fcitx5";
+    fcitx5.addons = with pkgs; [ 
+    fcitx5-m17n
+    openbangla-keyboard 
+    ];
+   };
 
+#  i18n.inputMethod = {
+#      enabled = "ibus";
+#      ibus.engines = with pkgs.ibus-engines; [ 
+#      m17n
+#      openbangla-keyboard 
+#      ];
+#     };
 
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "en_IN";
