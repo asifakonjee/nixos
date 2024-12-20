@@ -55,7 +55,7 @@ in
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
 
-  nixpkgs.overlay = [ openbangla-keyboard-overlay ];
+  nixpkgs.overlays = [ openbangla-keyboard-overlay ];
   i18n.inputMethod = {
     enabled = "fcitx5";
     fcitx5.addons = with pkgs; [ 
