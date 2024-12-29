@@ -43,13 +43,27 @@
     LC_TIME = "en_US.UTF-8";
   };
 
+  nixpkgs.overlays = [
+  (import /etc/nixos/openbangla-fcitx5-overlay.nix)
+  ];
+
   i18n.inputMethod = {
-    enabled = "fcitx5";
-    fcitx5.addons = with pkgs; [ 
-    fcitx5-m17n
-    fcitx5-openbangla-keyboard 
-    ];
-   };
+  enabled = "fcitx5";
+  fcitx5.addons = with pkgs; [
+      fcitx5-m17n
+      openbangla-keyboard
+   ];
+  };
+
+
+#  This will install default Openbangla Keybaord
+#  i18n.inputMethod = {
+#    enabled = "fcitx5";
+#    fcitx5.addons = with pkgs; [ 
+#    fcitx5-m17n
+#    fcitx5-openbangla-keyboard 
+#    ];
+#   };
 
 
   # Enable the X11 windowing system.
