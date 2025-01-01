@@ -11,9 +11,20 @@
     ];
 
   # Bootloader.
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/sda";
-  boot.loader.grub.useOSProber = true;
+  #boot.loader.grub.enable = true;
+  #boot.loader.grub.device = "/dev/sda";
+  #boot.loader.grub.useOSProber = true;
+
+
+  # Bootloader.
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.timeout = 1;
+    boot.plymouth = {
+        enable = true;
+        theme = "bgrt";
+    };
+    boot.kernelParams = [ "splash" "quiet"];
 
   networking.hostName = "Linux"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -44,37 +55,25 @@
   };
 
   nixpkgs.overlays = [
-  (import /etc/nixos/openbangla-fcitx5-overlay.nix)
+    (import /etc/nixos/openbangla-fcitx5-overlay.nix)
   ];
 
+
   i18n.inputMethod = {
-  enable = true;
-  type = "fcitx5";
-  fcitx5.addons = with pkgs; [
-      fcitx5-m17n
-      openbangla-keyboard
-   ];
+    enable = true;
+    type = "fcitx5";
+   fcitx5.addons = with pkgs; [
+          openbangla-keyboard ];
   };
 
+     # Enable the X11 windowing system.
+     # You can disable this if you're only using the Wayland session.
+     services.xserver.enable = true;
 
-#  This will install default Openbangla Keybaord
-#  i18n.inputMethod = {
-#    enable = true;
-#    type = "fcitx5";
-#    fcitx5.addons = with pkgs; [ 
-#    fcitx5-m17n
-#    fcitx5-openbangla-keyboard 
-#    ];
-#   };
+     # Enable the KDE Plasma Desktop Environment.
+     services.displayManager.sddm.enable = true;
+     services.desktopManager.plasma6.enable = true;
 
-
-  # Enable the X11 windowing system.
-  # You can disable this if you're only using the Wayland session.
-  services.xserver.enable = true;
-
-  # Enable the KDE Plasma Desktop Environment.
-  services.displayManager.sddm.enable = true;
-  services.desktopManager.plasma6.enable = true;
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -82,60 +81,70 @@
     variant = "";
   };
 
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
-
   # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    jack.enable = true;
+    hardware.pulseaudio.enable = false;
+    security.rtkit.enable = true;
+    services.pipewire = {
+      enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      pulse.enable = true;
+      # If you want to use JACK applications, uncomment this
+      jack.enable = true;
 
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
-  };
+      # use the example session manager (no others are packaged yet so this is enabled by default,
+      # no need to redefine it in your config for now)
+      #media-session.enable = true;
+    };
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
+    # Enable touchpad support (enabled default in most desktopManager).
+    # services.xserver.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.asifakonjee = {
     isNormalUser = true;
     description = "Dr. Asifur Rahman Akonjee";
     extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
-      kdePackages.kate
-    #  thunderbird
-    ];
+    packages = with pkgs; [];
   };
 
+  # Password less SUDO Use! Use with caution!
+  security.sudo.extraRules = [{
+        users = ["asifakonjee"];
+        commands = [{command = "ALL";
+        options = ["NOPASSWD"];
+        }];
+  }];
+
   # Enable automatic login for the user.
-#  services.xserver.displayManager.autoLogin.enable = true;
-#  services.xserver.displayManager.autoLogin.user = "asifakonjee";
-   services.displayManager.autoLogin.enable = true;
-   services.displayManager.autoLogin.user = "asifakonjee";
-   
-  # Install firefox.
-  programs.firefox.enable = true;
+  #  services.xserver.displayManager.autoLogin.enable = true;
+  #  services.xserver.displayManager.autoLogin.user = "asifakonjee";
+     services.displayManager.autoLogin.enable = true;
+     services.displayManager.autoLogin.user = "asifakonjee";
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+
+  # Install firefox.
+    programs.firefox.enable = true;
+
+  # Install ZSH Shell
+  programs.zsh.enable = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-     wget
-     git
-     micro
-     fastfetch
+   wget
+   git
+   micro
+   bat
+   eza
+   fastfetch
+   htop
+   nix-prefetch-git
   ];
+
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
