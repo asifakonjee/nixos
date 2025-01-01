@@ -105,6 +105,7 @@
     isNormalUser = true;
     description = "Dr. Asifur Rahman Akonjee";
     extraGroups = [ "networkmanager" "wheel" ];
+    shell = pkgs.zsh;
     packages = with pkgs; [];
   };
 
